@@ -158,18 +158,7 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .sg{background:var(--accent2)}.sa{background:var(--warn)}.sr{background:var(--text3)}
 .crinf{flex:1}.crn{font-size:14px;font-weight:500}.crr{font-size:12px;color:var(--text2);margin-top:2px}
 .dmbtn{padding:7px 14px;border-radius:12px;border:1px solid var(--border2);background:transparent;font-size:12px;font-family:var(--mono);color:var(--accent);cursor:pointer}
-#tallyFlash{position:fixed;inset:0;background:var(--danger);opacity:0;pointer-events:none;z-index:9999;display:none}
-#tallyFlash.flash{display:block;animation:tallyPop 1.8s ease-out forwards}
-@keyframes tallyPop{
-  0%{opacity:0}
-  8%{opacity:0.92}
-  20%{opacity:0.7}
-  35%{opacity:0.9}
-  50%{opacity:0.5}
-  65%{opacity:0.8}
-  80%{opacity:0.3}
-  100%{opacity:0;display:none}
-}
+#tallyFlash{position:fixed;inset:0;background:#ff0000;opacity:0;pointer-events:none;z-index:9999;display:none;transition:opacity 0.1s}
 #toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:10px 20px;font-size:13px;font-family:var(--mono);color:var(--text);white-space:nowrap;opacity:0;transition:all .2s;pointer-events:none;z-index:350}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 ::-webkit-scrollbar{width:3px}
@@ -722,12 +711,25 @@ function dmUser(name,ini,ci,e){
 
 // ═══ SOUNDS ═══
 function flashChannel(key){
-  // Full screen red tally flash — catches attention instantly
   var tally=document.getElementById('tallyFlash');
-  tally.classList.remove('flash');
-  void tally.offsetWidth; // force reflow
-  tally.classList.add('flash');
-  setTimeout(function(){tally.classList.remove('flash');},1900);
+  // Reset completely first
+  tally.style.display='none';
+  tally.style.opacity='0';
+  // Small delay then flash — forces browser to register the reset
+  setTimeout(function(){
+    tally.style.display='block';
+    var count=0;
+    var max=6;
+    var iv=setInterval(function(){
+      count++;
+      tally.style.opacity=(count%2===1)?'0.88':'0';
+      if(count>=max){
+        clearInterval(iv);
+        tally.style.opacity='0';
+        setTimeout(function(){tally.style.display='none';},150);
+      }
+    },200);
+  },30);
 }
 function playPing(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(0.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);o.start();o.stop(ctx.currentTime+0.15);}catch(e){}}
 function playAlertSound(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();[0,0.2,0.4].forEach(function(delay){var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=660;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+delay+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+delay+0.22);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+0.25);});}catch(e){}}
