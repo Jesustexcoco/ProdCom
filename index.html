@@ -18,7 +18,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%;height:-webkit-fill-available}
 body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans)}
-#app{display:flex;flex-direction:column;height:100%;height:-webkit-fill-available;max-width:500px;margin:0 auto;position:relative;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;height:-webkit-fill-available;margin:0 auto;position:relative;overflow:hidden}
 #connectScreen{position:absolute;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px}
 #connectScreen.hide{display:none}
 .clogo{font-family:var(--mono);font-size:28px;font-weight:500;letter-spacing:.1em}
@@ -26,23 +26,26 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .cstatus{font-family:var(--mono);font-size:12px;color:var(--text2);text-align:center}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#loginScreen{position:absolute;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;overflow-y:auto}
+/* Matrix rain canvas */
+#matrixCanvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.5}
+#loginScreen{position:absolute;inset:0;background:#000;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;overflow:hidden}
 #loginScreen.show{display:flex}
-.llogo{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:.1em}
-.llogo span{color:var(--accent)}
-.lsub{font-size:13px;color:var(--text2);text-align:center;line-height:1.6}
-.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
-.lcard{padding:14px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg2);cursor:pointer;text-align:center}
-.lcard:active{border-color:var(--accent);background:rgba(124,92,252,.1)}
-.lav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:500;margin:0 auto 8px}
-.ln{font-size:13px;font-weight:500}.lr{font-size:11px;color:var(--text2);margin-top:2px}
-.orrow{display:flex;align-items:center;gap:10px;width:100%}
-.orrow hr{flex:1;border:none;border-top:1px solid var(--border)}
-.orrow span{font-size:11px;color:var(--text3)}
-.crow{display:flex;gap:8px;width:100%}
-.cinp{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 13px;color:var(--text);font-family:var(--sans);font-size:16px;outline:none}
-.cinp:focus{border-color:var(--accent)}
-.jbtn{padding:11px 16px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--mono);font-size:12px;cursor:pointer;white-space:nowrap}
+.login-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:320px}
+.llogo{font-family:var(--mono);font-size:32px;font-weight:500;letter-spacing:.15em;color:#00ff41;text-shadow:0 0 20px #00ff41,0 0 40px #00ff41;animation:glitch 4s infinite}
+@keyframes glitch{
+  0%,95%,100%{text-shadow:0 0 20px #00ff41,0 0 40px #00ff41;transform:none}
+  96%{text-shadow:-3px 0 #ff0000,3px 0 #0000ff,0 0 20px #00ff41;transform:skewX(-2deg)}
+  97%{text-shadow:3px 0 #ff0000,-3px 0 #0000ff,0 0 20px #00ff41;transform:skewX(2deg)}
+  98%{text-shadow:0 0 20px #00ff41;transform:none}
+}
+.lsub{font-family:var(--mono);font-size:12px;color:#00ff41;opacity:.7;letter-spacing:.1em;text-align:center}
+.login-box{width:100%;background:rgba(0,20,0,0.85);border:1px solid #00ff41;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 0 30px rgba(0,255,65,.15)}
+.login-label{font-family:var(--mono);font-size:11px;color:#00ff41;letter-spacing:.1em;opacity:.8}
+.cinp{width:100%;background:rgba(0,10,0,0.9);border:1px solid rgba(0,255,65,.4);border-radius:var(--radius-sm);padding:14px 16px;color:#00ff41;font-family:var(--mono);font-size:16px;outline:none;letter-spacing:.05em}
+.cinp:focus{border-color:#00ff41;box-shadow:0 0 12px rgba(0,255,65,.3)}
+.cinp::placeholder{color:rgba(0,255,65,.3)}
+.jbtn{width:100%;padding:14px;background:transparent;border:1px solid #00ff41;border-radius:var(--radius-sm);color:#00ff41;font-family:var(--mono);font-size:14px;font-weight:500;cursor:pointer;letter-spacing:.1em;transition:all .2s;text-transform:uppercase}
+.jbtn:active{background:rgba(0,255,65,.15);box-shadow:0 0 20px rgba(0,255,65,.4)}
 .topbar{display:flex;align-items:center;padding:12px 16px 10px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg);gap:8px}
 .tlogo{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.08em;flex:1}
 .tlogo span{color:var(--accent)}
@@ -175,17 +178,15 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 </div>
 
 <div id="loginScreen">
-  <div class="llogo">Squad<span>Comm</span></div>
-  <div class="lsub">Production team intercom<br>Who are you today?</div>
-  <div class="lgrid" id="quickUsers"></div>
-  <div class="orrow"><hr><span>OR TYPE YOUR NAME</span><hr></div>
-  <div class="crow">
-    <input class="cinp" id="customName" placeholder="Your name..." maxlength="20" autocomplete="off"/>
-    <select class="cinp" id="customRole" style="max-width:110px">
-      <option>Line A</option><option>Line B</option><option>QC</option>
-      <option>Maintenance</option><option>Supervisor</option>
-    </select>
-    <button class="jbtn" onclick="joinCustom()">JOIN</button>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="login-inner">
+    <div class="llogo">SquadComm</div>
+    <div class="lsub">PRODUCTION INTERCOM SYSTEM</div>
+    <div class="login-box">
+      <div class="login-label">ENTER YOUR NAME</div>
+      <input class="cinp" id="customName" placeholder="Your name..." maxlength="20" autocomplete="off"/>
+      <button class="jbtn" onclick="joinCustom()">► ENTER THE SYSTEM</button>
+    </div>
   </div>
 </div>
 
@@ -234,7 +235,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
       </div>
       <div class="ic-hint">Tap mic to unmute and go live. Everyone on the channel hears you instantly through Agora.</div>
     </div>
-    <div class="ic-channels" id="icChannels"></div>
   </div>
 </div>
 
@@ -446,7 +446,41 @@ function updateSpeakers(){
 }
 
 // ═══ AUTO CONNECT FIREBASE ═══
+// ═══ MATRIX RAIN ═══
+function startMatrixRain(){
+  var canvas=document.getElementById('matrixCanvas');
+  if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  var drops=[];
+  var cols=Math.floor(canvas.width/16)+1;
+  for(var i=0;i<cols;i++)drops[i]=Math.random()*-50;
+  var chars='アイウエオカキクケコサシスセソ0123456789ABCDEFabcdef$#@!%';
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.04)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(var i=0;i<drops.length;i++){
+      var ch=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillStyle=drops[i]<3?'#aaffaa':'#00ff41';
+      ctx.font='bold 15px monospace';
+      ctx.fillText(ch,i*16,drops[i]*20);
+      if(drops[i]*20>canvas.height&&Math.random()>0.97)drops[i]=0;
+      drops[i]+=0.6;
+    }
+  }
+  setInterval(draw,40);
+  window.addEventListener('resize',function(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    cols=Math.floor(canvas.width/16)+1;
+    drops=[];
+    for(var i=0;i<cols;i++)drops[i]=Math.random()*-50;
+  });
+}
+
 window.addEventListener('load',function(){
+  startMatrixRain();
   try{
     firebase.initializeApp(FIREBASE_CONFIG);
     db=firebase.database();
@@ -456,7 +490,7 @@ window.addEventListener('load',function(){
         setTimeout(function(){
           document.getElementById('connectScreen').classList.add('hide');
           document.getElementById('loginScreen').classList.add('show');
-          renderLogin();
+          startMatrixRain();
         },500);
       }
     });
@@ -491,9 +525,8 @@ function joinAs(name,role,ci,preIni){
 }
 function joinCustom(){
   var name=document.getElementById('customName').value.trim();
-  var role=document.getElementById('customRole').value;
   if(!name){document.getElementById('customName').focus();return;}
-  joinAs(name,role,Math.floor(Math.random()*COLORS.length));
+  joinAs(name,'Crew',Math.floor(Math.random()*COLORS.length));
 }
 document.getElementById('customName').addEventListener('keydown',function(e){if(e.key==='Enter')joinCustom();});
 document.getElementById('alertInp').addEventListener('keydown',function(e){if(e.key==='Enter')sendAlert();});
