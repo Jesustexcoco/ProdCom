@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>FloorComm</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Agora SDK — works on Safari, iPhone, Android, Chrome -->
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.19.0.js"></script>
+<!-- Firebase for text messages -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
@@ -89,51 +92,45 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .mfield::placeholder{color:var(--text3)}
 .sbtn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff}
 
-/* INTERCOM VIEW */
+/* INTERCOM */
 .icview{flex:1;display:flex;flex-direction:column;align-items:center;min-height:0;overflow-y:auto}
-
-/* JOIN AUDIO SCREEN — shown first, one tap unlocks everything */
-#joinAudioScreen{position:absolute;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;text-align:center}
-#joinAudioScreen.hide{display:none}
-.ja-icon{font-size:56px}
-.ja-title{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text)}
-.ja-desc{font-size:13px;color:var(--text2);line-height:1.7;max-width:280px}
-.ja-btn{padding:16px 40px;background:var(--accent2);border:none;border-radius:var(--radius);color:#0a1f18;font-family:var(--mono);font-size:16px;font-weight:500;cursor:pointer;letter-spacing:.04em;width:100%;max-width:280px}
-.ja-btn:active{transform:scale(.97)}
-.ja-note{font-size:11px;color:var(--text3);font-family:var(--mono);line-height:1.6;max-width:260px}
-
 .ic-statusbar{width:100%;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.ic-live-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0}
-.ic-live-dot.active{background:var(--danger);animation:blink .8s infinite}
+.ic-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.ic-dot.connected{background:var(--accent2)}
+.ic-dot.live{background:var(--danger);animation:blink .7s infinite}
 .ic-statuslbl{font-family:var(--mono);font-size:11px;color:var(--text2);flex:1}
-.ic-membersbar{font-family:var(--mono);font-size:10px;color:var(--accent2)}
-.ic-speakers{width:100%;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0;min-height:50px;align-items:center}
-.ic-speaker-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--danger);background:rgba(226,75,74,.1);font-size:12px;font-family:var(--mono);color:var(--danger)}
-.ic-speaker-pulse{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:pulse3 .7s infinite}
+.ic-members{font-family:var(--mono);font-size:10px;color:var(--accent2)}
+.ic-speakers{width:100%;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;min-height:50px;align-items:center;flex-shrink:0}
+.ic-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--danger);background:rgba(226,75,74,.1);font-size:12px;font-family:var(--mono);color:var(--danger)}
+.ic-pulse{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:pulse3 .7s infinite}
 @keyframes pulse3{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
-.ic-nospeakers{font-size:12px;color:var(--text3);font-family:var(--mono)}
+.ic-empty{font-size:12px;color:var(--text3);font-family:var(--mono)}
 .ic-micwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
-.ic-micring{width:200px;height:200px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ic-micring.on{animation:micRing 1.2s infinite}
-@keyframes micRing{0%{box-shadow:0 0 0 0 rgba(226,75,74,.5)}70%{box-shadow:0 0 0 22px rgba(226,75,74,0)}100%{box-shadow:0 0 0 0 rgba(226,75,74,0)}}
-.ic-micbtn{width:170px;height:170px;border-radius:50%;background:var(--bg2);border:2px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none;touch-action:none}
-.ic-micbtn.on{background:var(--danger);border-color:var(--danger)}
-.ic-micicon{font-size:48px}
-.ic-miclabel{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:.06em;text-align:center;line-height:1.5}
-.ic-micbtn.on .ic-miclabel{color:rgba(255,255,255,.9)}
+.ic-ring{width:200px;height:200px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic-ring.live{animation:ringpulse 1s infinite}
+@keyframes ringpulse{0%{box-shadow:0 0 0 0 rgba(226,75,74,.5)}70%{box-shadow:0 0 0 24px rgba(226,75,74,0)}100%{box-shadow:0 0 0 0 rgba(226,75,74,0)}}
+.ic-btn{width:170px;height:170px;border-radius:50%;background:var(--bg2);border:2px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none;touch-action:none}
+.ic-btn.live{background:var(--danger);border-color:var(--danger)}
+.ic-btn.connecting{background:rgba(124,92,252,.2);border-color:var(--accent);animation:spin 1s linear infinite}
+.ic-icon{font-size:48px}
+.ic-lbl{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:.06em;text-align:center;line-height:1.5}
+.ic-btn.live .ic-lbl{color:rgba(255,255,255,.9)}
+.ic-btn.connecting .ic-lbl{color:var(--accent)}
 .ic-wave{display:flex;gap:4px;align-items:center;height:28px;visibility:hidden}
 .ic-wave.show{visibility:visible}
 .ic-wave span{width:4px;border-radius:2px;background:var(--danger)}
-.iw1{animation:vba .5s ease-in-out infinite;height:4px}
-.iw2{animation:vba .5s .08s ease-in-out infinite;height:4px}
-.iw3{animation:vba .5s .16s ease-in-out infinite;height:4px}
-.iw4{animation:vba .5s .11s ease-in-out infinite;height:4px}
-.iw5{animation:vba .5s .04s ease-in-out infinite;height:4px}
-@keyframes vba{0%,100%{height:4px}50%{height:20px}}
-.ic-hint{font-size:12px;color:var(--text3);text-align:center;line-height:1.6;max-width:260px;font-family:var(--mono);padding:0 16px}
-.ic-channelstrip{width:100%;padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.iw1{animation:wv .5s ease-in-out infinite;height:4px}
+.iw2{animation:wv .5s .08s ease-in-out infinite;height:4px}
+.iw3{animation:wv .5s .16s ease-in-out infinite;height:4px}
+.iw4{animation:wv .5s .11s ease-in-out infinite;height:4px}
+.iw5{animation:wv .5s .04s ease-in-out infinite;height:4px}
+@keyframes wv{0%,100%{height:4px}50%{height:20px}}
+.ic-hint{font-size:12px;color:var(--text3);text-align:center;line-height:1.6;max-width:260px;font-family:var(--mono)}
+.ic-channels{width:100%;padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
 .ic-ch{padding:7px 16px;border-radius:16px;border:1px solid var(--border2);background:transparent;font-size:12px;font-family:var(--mono);color:var(--text2);cursor:pointer}
 .ic-ch.on{background:rgba(124,92,252,.15);border-color:var(--accent);color:var(--accent)}
+
+/* ALERT MODAL */
 #alertModal{display:none;position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:24px}
 #alertModal.open{display:flex}
 .mbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:20px;width:100%;max-width:340px}
@@ -212,37 +209,28 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 </div>
 
 <div class="view" id="view-intercom">
-  <!-- JOIN AUDIO SCREEN — one tap to unlock audio on Safari/Chrome -->
-  <div id="joinAudioScreen">
-    <div class="ja-icon">🎙</div>
-    <div class="ja-title">Join the live channel</div>
-    <div class="ja-desc">Tap below to join the live audio channel. This unlocks your speaker so you can hear your crew instantly.</div>
-    <button class="ja-btn" onclick="joinAudio()">TAP TO JOIN AUDIO</button>
-    <div class="ja-note">Required once per session by your browser. After tapping, audio plays automatically.</div>
-  </div>
-
   <div class="icview">
     <div class="ic-statusbar">
-      <div class="ic-live-dot" id="icLiveDot"></div>
-      <div class="ic-statuslbl" id="icStatusLbl">Channel open — tap mic to talk</div>
-      <div class="ic-membersbar" id="icMembers"></div>
+      <div class="ic-dot" id="icDot"></div>
+      <div class="ic-statuslbl" id="icLbl">Tap mic to join live channel</div>
+      <div class="ic-members" id="icMembers"></div>
     </div>
     <div class="ic-speakers" id="icSpeakers">
-      <div class="ic-nospeakers" id="icNoSpeakers">No one speaking</div>
+      <div class="ic-empty">No one speaking</div>
     </div>
     <div class="ic-micwrap">
-      <div class="ic-micring" id="icMicRing">
-        <div class="ic-micbtn" id="icMicBtn" onclick="toggleMic()">
-          <span class="ic-micicon" id="icMicIcon">🎙</span>
-          <span class="ic-miclabel" id="icMicLabel">TAP TO<br>TALK</span>
+      <div class="ic-ring" id="icRing">
+        <div class="ic-btn" id="icBtn" onclick="toggleMic()">
+          <span class="ic-icon" id="icIcon">🎙</span>
+          <span class="ic-lbl" id="icBtnLbl">TAP TO<br>TALK</span>
         </div>
       </div>
       <div class="ic-wave" id="icWave">
         <span class="iw1"></span><span class="iw2"></span><span class="iw3"></span><span class="iw4"></span><span class="iw5"></span>
       </div>
-      <div class="ic-hint">Tap mic to unmute and talk live. Tap again to mute. Everyone on the channel hears you instantly.</div>
+      <div class="ic-hint">Tap mic to unmute and go live. Everyone on the channel hears you instantly through Agora.</div>
     </div>
-    <div class="ic-channelstrip" id="icChannelStrip"></div>
+    <div class="ic-channels" id="icChannels"></div>
   </div>
 </div>
 
@@ -284,25 +272,27 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 <div id="toast"></div>
 
 <script>
-var FIREBASE_CONFIG={
+// ═══ AGORA CONFIG ═══
+var AGORA_APP_ID = '4108e66c90314fbabb9de0e3eefd22ef';
+
+// ═══ FIREBASE CONFIG ═══
+var FIREBASE_CONFIG = {
   apiKey:"AIzaSyA0PqtvDAPsNIzcfPqS5X-hQGy1cNZoScg",
   authDomain:"floorcomm-8ca67.firebaseapp.com",
   projectId:"floorcomm-8ca67",
   databaseURL:"https://floorcomm-8ca67-default-rtdb.firebaseio.com"
 };
 
-var db=null,me=null,currentChat=null;
+// ═══ STATE ═══
+var db=null, me=null, currentChat=null;
 var alertTargets=new Set(['AllCrew']);
-var localMsgs={},unread={},myId=null;
+var localMsgs={}, unread={}, myId=null;
 var icChannel='AllCrew';
 var micOn=false;
-var micStream=null;
-var peerConnections={};
-var speakers={};
-var audioJoined=false;
-// Stored audio elements — created on joinAudio tap so they are ready to play
-var remoteAudios={};
-var ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
+var agoraClient=null;
+var localTrack=null;
+var remoteTracks={};
+var agoraJoined=false;
 
 var COLORS=[
   {bg:'#2a1f4a',col:'#a78bfa'},{bg:'#1a3a2e',col:'#5DCAA5'},
@@ -332,31 +322,130 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function fmtT(ts){return new Date(ts).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
-// ═══ JOIN AUDIO — the key tap that unlocks Safari audio ═══
-function joinAudio(){
-  audioJoined=true;
-  // Hide join screen
-  document.getElementById('joinAudioScreen').classList.add('hide');
-  // Create a silent audio context — this unlocks audio on Safari
-  try{
-    var ctx=new(window.AudioContext||window.webkitAudioContext)();
-    ctx.resume();
-    // Play a silent buffer to unlock audio
-    var buf=ctx.createBuffer(1,1,22050);
-    var src=ctx.createBufferSource();
-    src.buffer=buf;
-    src.connect(ctx.destination);
-    src.start(0);
-  }catch(e){}
-  // Also create a silent audio element and play it
-  var silentAudio=new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-  silentAudio.play().catch(function(){});
-  showToast('Audio unlocked! Tap mic to talk 🎙');
-  // Now connect to any peers already online
-  connectToAllPeers();
+// ═══ AGORA SETUP ═══
+function initAgora(){
+  agoraClient = AgoraRTC.createClient({mode:'rtc', codec:'vp8'});
+  AgoraRTC.setLogLevel(4); // suppress logs
+
+  // Someone published audio — play it automatically
+  agoraClient.on('user-published', function(user, mediaType){
+    agoraClient.subscribe(user, mediaType).then(function(){
+      if(mediaType === 'audio'){
+        user.audioTrack.play(); // Agora handles autoplay on ALL browsers
+        remoteTracks[user.uid] = user.audioTrack;
+        updateSpeakers();
+      }
+    });
+  });
+
+  agoraClient.on('user-unpublished', function(user, mediaType){
+    if(mediaType === 'audio'){
+      delete remoteTracks[user.uid];
+      updateSpeakers();
+    }
+  });
+
+  agoraClient.on('user-left', function(user){
+    delete remoteTracks[user.uid];
+    updateSpeakers();
+  });
+
+  agoraClient.on('user-joined', function(user){
+    document.getElementById('icMembers').textContent=(agoraClient.remoteUsers.length+1)+' online';
+  });
 }
 
-// ═══ AUTO CONNECT ═══
+async function joinAgoraChannel(channelName){
+  if(!agoraClient) initAgora();
+  if(agoraJoined){
+    await agoraClient.leave();
+    agoraJoined=false;
+  }
+  var uid = me.name.replace(/[^a-zA-Z0-9]/g,'_').slice(0,20)+'_'+Date.now().toString(36).slice(-4);
+  await agoraClient.join(AGORA_APP_ID, channelName, null, uid);
+  agoraJoined=true;
+  setIcStatus('connected','Channel open — tap mic to talk');
+  document.getElementById('icDot').className='ic-dot connected';
+}
+
+async function toggleMic(){
+  if(!me) return;
+  if(!micOn){
+    // Turn mic ON
+    setIcStatus('connecting','Connecting...');
+    document.getElementById('icBtn').classList.add('connecting');
+    document.getElementById('icBtnLbl').textContent='JOINING...';
+    try{
+      // Join Agora channel first if not joined
+      if(!agoraJoined) await joinAgoraChannel(icChannel);
+      // Create and publish mic track
+      localTrack = await AgoraRTC.createMicrophoneAudioTrack({
+        encoderConfig:{sampleRate:48000,stereo:false,bitrate:64},
+        AEC:true, ANS:true, AGC:true
+      });
+      await agoraClient.publish([localTrack]);
+      micOn=true;
+      document.getElementById('icBtn').classList.remove('connecting');
+      document.getElementById('icBtn').classList.add('live');
+      document.getElementById('icRing').classList.add('live');
+      document.getElementById('icIcon').textContent='🔴';
+      document.getElementById('icBtnLbl').textContent='YOU ARE\nLIVE';
+      document.getElementById('icWave').classList.add('show');
+      document.getElementById('icDot').className='ic-dot live';
+      setIcStatus('live','You are broadcasting live');
+      showToast('🔴 You are live — crew hears you!');
+      // Update Firebase speaking status
+      if(db&&myId) db.ref('speaking/'+myId).set({name:me.name,ts:Date.now()});
+    }catch(e){
+      document.getElementById('icBtn').classList.remove('connecting');
+      document.getElementById('icBtnLbl').textContent='TAP TO\nTALK';
+      showToast('Mic error: '+e.message);
+      setIcStatus('connected','Tap mic to talk');
+    }
+  } else {
+    // Turn mic OFF
+    micOn=false;
+    if(localTrack){
+      await agoraClient.unpublish([localTrack]);
+      localTrack.close();
+      localTrack=null;
+    }
+    document.getElementById('icBtn').classList.remove('live');
+    document.getElementById('icRing').classList.remove('live');
+    document.getElementById('icIcon').textContent='🎙';
+    document.getElementById('icBtnLbl').textContent='TAP TO\nTALK';
+    document.getElementById('icWave').classList.remove('show');
+    document.getElementById('icDot').className='ic-dot connected';
+    setIcStatus('connected','Channel open — tap mic to talk');
+    if(db&&myId) db.ref('speaking/'+myId).remove();
+    showToast('Mic OFF');
+  }
+}
+
+function setIcStatus(state, msg){
+  document.getElementById('icLbl').textContent=msg;
+}
+
+function updateSpeakers(){
+  var box=document.getElementById('icSpeakers');
+  box.querySelectorAll('.ic-chip').forEach(function(c){c.remove();});
+  var empty=box.querySelector('.ic-empty');
+  var keys=Object.keys(remoteTracks);
+  if(keys.length===0){
+    if(empty)empty.style.display='block';
+  } else {
+    if(empty)empty.style.display='none';
+    keys.forEach(function(uid){
+      var chip=document.createElement('div');
+      chip.className='ic-chip';
+      chip.innerHTML='<div class="ic-pulse"></div>Crew member is talking';
+      box.appendChild(chip);
+    });
+  }
+  document.getElementById('icMembers').textContent=(agoraClient?agoraClient.remoteUsers.length+1:1)+' online';
+}
+
+// ═══ AUTO CONNECT FIREBASE ═══
 window.addEventListener('load',function(){
   try{
     firebase.initializeApp(FIREBASE_CONFIG);
@@ -395,6 +484,9 @@ function joinAs(name,role,ci,preIni){
   document.getElementById('loginScreen').classList.remove('show');
   renderAll();
   goOnline();
+  // Pre-join Agora channel so audio is ready instantly
+  initAgora();
+  joinAgoraChannel(icChannel).catch(function(e){console.log('agora join err',e);});
   showToast('Welcome, '+name+'!');
 }
 function joinCustom(){
@@ -406,224 +498,41 @@ function joinCustom(){
 document.getElementById('customName').addEventListener('keydown',function(e){if(e.key==='Enter')joinCustom();});
 document.getElementById('alertInp').addEventListener('keydown',function(e){if(e.key==='Enter')sendAlert();});
 
-// ═══ ONLINE ═══
+// ═══ FIREBASE PRESENCE ═══
 function goOnline(){
   myId=me.name.replace(/[^a-zA-Z0-9]/g,'_')+'_'+Date.now().toString(36);
   var ref=db.ref('presence/'+myId);
   ref.set({name:me.name,role:me.role,ts:Date.now()});
   ref.onDisconnect().remove();
-  db.ref('signals/'+myId).onDisconnect().remove();
   db.ref('speaking/'+myId).onDisconnect().remove();
   db.ref('presence').on('value',function(snap){
     var n=0,now=Date.now();
     snap.forEach(function(c){var d=c.val();if(d&&now-d.ts<90000)n++;});
     document.getElementById('onlineCount').textContent=n+' ONLINE';
-    document.getElementById('icMembers').textContent=n+' online';
   });
   setInterval(function(){db.ref('presence/'+myId).update({ts:Date.now()});},25000);
-  db.ref('signals/'+myId).on('child_added',function(snap){
-    var sig=snap.val();if(!sig)return;
-    snap.ref.remove();
-    handleSignal(sig);
-  });
-  db.ref('speaking').on('value',function(snap){
-    speakers={};
-    var now=Date.now();
-    snap.forEach(function(c){
-      var d=c.val();
-      if(d&&d.name&&d.name!==me.name&&now-d.ts<3000)speakers[c.key]=d.name;
-    });
-    renderSpeakers();
-  });
   listenAllCh();
   listenAlerts();
 }
 
-// ═══ MIC TOGGLE ═══
-function toggleMic(){
-  if(!audioJoined){showToast('Tap "Join Audio" first');return;}
-  if(!micOn){
-    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,sampleRate:44100}})
-      .then(function(stream){
-        micStream=stream;
-        micOn=true;
-        updateMicUI(true);
-        // Add track to all existing peer connections
-        Object.keys(peerConnections).forEach(function(pid){
-          var pc=peerConnections[pid];
-          micStream.getTracks().forEach(function(t){
-            try{pc.addTrack(t,micStream);}catch(e){}
-          });
-        });
-        // Connect to new peers
-        connectToAllPeers();
-        startSpeakingBroadcast();
-        showToast('🔴 You are live — crew can hear you');
-      })
-      .catch(function(e){
-        showToast('Mic access denied — check browser settings');
-      });
-  } else {
-    micOn=false;
-    updateMicUI(false);
-    if(micStream){
-      micStream.getTracks().forEach(function(t){t.stop();});
-      micStream=null;
-    }
-    stopSpeakingBroadcast();
-    showToast('Mic OFF');
-  }
-}
-
-function updateMicUI(on){
-  var btn=document.getElementById('icMicBtn');
-  var ring=document.getElementById('icMicRing');
-  var icon=document.getElementById('icMicIcon');
-  var lbl=document.getElementById('icMicLabel');
-  var wave=document.getElementById('icWave');
-  var dot=document.getElementById('icLiveDot');
-  var statuslbl=document.getElementById('icStatusLbl');
-  if(on){
-    btn.classList.add('on');ring.classList.add('on');
-    icon.textContent='🔴';lbl.textContent='YOU ARE\nLIVE';
-    wave.classList.add('show');dot.classList.add('active');
-    statuslbl.textContent='You are broadcasting live';
-  }else{
-    btn.classList.remove('on');ring.classList.remove('on');
-    icon.textContent='🎙';lbl.textContent='TAP TO\nTALK';
-    wave.classList.remove('show');dot.classList.remove('active');
-    statuslbl.textContent='Channel open — tap mic to talk';
-  }
-}
-
-var speakingInterval=null;
-function startSpeakingBroadcast(){
-  db.ref('speaking/'+myId).set({name:me.name,ts:Date.now()});
-  speakingInterval=setInterval(function(){
-    if(micOn)db.ref('speaking/'+myId).set({name:me.name,ts:Date.now()});
-  },1500);
-}
-function stopSpeakingBroadcast(){
-  clearInterval(speakingInterval);
-  db.ref('speaking/'+myId).remove();
-}
-
-function renderSpeakers(){
-  var box=document.getElementById('icSpeakers');
-  var noSp=document.getElementById('icNoSpeakers');
-  box.querySelectorAll('.ic-speaker-chip').forEach(function(c){c.remove();});
-  var keys=Object.keys(speakers);
-  noSp.style.display=keys.length===0?'block':'none';
-  keys.forEach(function(k){
-    var chip=document.createElement('div');
-    chip.className='ic-speaker-chip';
-    chip.innerHTML='<div class="ic-speaker-pulse"></div>'+esc(speakers[k])+' is talking';
-    box.appendChild(chip);
-  });
-}
-
-// ═══ WEBRTC ═══
-function sendSig(toId,data){
-  db.ref('signals/'+toId).push(Object.assign({from:myId,fromName:me.name},data));
-}
-function handleSignal(sig){
-  if(sig.type==='offer')handleOffer(sig);
-  else if(sig.type==='answer')handleAnswer(sig);
-  else if(sig.type==='ice')handleIce(sig);
-  else if(sig.type==='join')setTimeout(function(){createOffer(sig.from);},400);
-}
-function connectToAllPeers(){
-  db.ref('presence').once('value',function(snap){
-    var now=Date.now();
-    snap.forEach(function(c){
-      var d=c.val();
-      if(d&&d.name!==me.name&&now-d.ts<90000){
-        sendSig(c.key,{type:'join'});
-        setTimeout(function(){createOffer(c.key);},300);
-      }
-    });
-  });
-}
-function getOrCreateAudio(pid){
-  if(remoteAudios[pid])return remoteAudios[pid];
-  var a=document.createElement('audio');
-  a.id='audio_'+pid;
-  a.autoplay=true;
-  a.playsinline=true;
-  a.controls=false;
-  a.style.display='none';
-  document.body.appendChild(a);
-  remoteAudios[pid]=a;
-  return a;
-}
-function getPeer(pid){
-  if(peerConnections[pid])return peerConnections[pid];
-  var pc=new RTCPeerConnection({iceServers:ICE});
-  peerConnections[pid]=pc;
-  if(micStream)micStream.getTracks().forEach(function(t){pc.addTrack(t,micStream);});
-  pc.onicecandidate=function(e){if(e.candidate)sendSig(pid,{type:'ice',candidate:e.candidate});};
-  pc.ontrack=function(e){
-    var a=getOrCreateAudio(pid);
-    a.srcObject=e.streams[0];
-    // Since joinAudio was tapped, play should work now
-    var p=a.play();
-    if(p){
-      p.then(function(){
-        // playing fine
-      }).catch(function(err){
-        console.log('play failed:',err);
-        // Try resume on next interaction
-        document.addEventListener('click',function(){a.play();},{once:true});
-        document.addEventListener('touchstart',function(){a.play();},{once:true});
-      });
-    }
-  };
-  pc.onconnectionstatechange=function(){
-    if(['disconnected','failed','closed'].indexOf(pc.connectionState)>-1)closePeer(pid);
-  };
-  return pc;
-}
-function createOffer(pid){
-  var pc=getPeer(pid);
-  pc.createOffer({audio:true,video:false})
-    .then(function(o){return pc.setLocalDescription(o);})
-    .then(function(){sendSig(pid,{type:'offer',sdp:pc.localDescription});})
-    .catch(function(){});
-}
-function handleOffer(sig){
-  var pc=getPeer(sig.from);pc._rn=sig.fromName;
-  pc.setRemoteDescription(new RTCSessionDescription(sig.sdp))
-    .then(function(){return pc.createAnswer();})
-    .then(function(a){return pc.setLocalDescription(a);})
-    .then(function(){sendSig(sig.from,{type:'answer',sdp:pc.localDescription});})
-    .catch(function(){});
-}
-function handleAnswer(sig){
-  var pc=peerConnections[sig.from];if(!pc)return;
-  pc.setRemoteDescription(new RTCSessionDescription(sig.sdp)).catch(function(){});
-}
-function handleIce(sig){
-  var pc=peerConnections[sig.from];if(!pc)return;
-  pc.addIceCandidate(new RTCIceCandidate(sig.candidate)).catch(function(){});
-}
-function closePeer(pid){
-  var pc=peerConnections[pid];
-  if(pc){try{pc.close();}catch(e){}delete peerConnections[pid];}
-  var a=document.getElementById('audio_'+pid);
-  if(a){a.remove();delete remoteAudios[pid];}
-}
-
-// ═══ INTERCOM CHANNELS ═══
+// ═══ CHANNEL SELECTOR ═══
 function renderIcChannels(){
-  var strip=document.getElementById('icChannelStrip');
+  var strip=document.getElementById('icChannels');
   strip.innerHTML='';
   CHANNELS.slice(0,4).forEach(function(ch){
     var b=document.createElement('button');
     b.className='ic-ch'+(ch.key===icChannel?' on':'');
     b.textContent=ch.label;
-    b.onclick=function(){
+    b.onclick=async function(){
       if(micOn){showToast('Mute first to switch channel');return;}
-      icChannel=ch.key;renderIcChannels();
+      icChannel=ch.key;
+      renderIcChannels();
+      // Switch Agora channel
+      if(agoraJoined){
+        await agoraClient.leave();
+        agoraJoined=false;
+      }
+      joinAgoraChannel(icChannel).catch(function(){});
     };
     strip.appendChild(b);
   });
