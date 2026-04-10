@@ -16,8 +16,6 @@
 html{height:100%;height:-webkit-fill-available}
 body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans)}
 #app{display:flex;flex-direction:column;height:100%;height:-webkit-fill-available;max-width:500px;margin:0 auto;position:relative;overflow:hidden}
-
-/* CONNECTING */
 #connectScreen{position:absolute;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px}
 #connectScreen.hide{display:none}
 .clogo{font-family:var(--mono);font-size:28px;font-weight:500;letter-spacing:.1em}
@@ -25,8 +23,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .cstatus{font-family:var(--mono);font-size:12px;color:var(--text2);text-align:center}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* LOGIN */
 #loginScreen{position:absolute;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;overflow-y:auto}
 #loginScreen.show{display:flex}
 .llogo{font-family:var(--mono);font-size:24px;font-weight:500;letter-spacing:.1em}
@@ -44,8 +40,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .cinp{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 13px;color:var(--text);font-family:var(--sans);font-size:16px;outline:none}
 .cinp:focus{border-color:var(--accent)}
 .jbtn{padding:11px 16px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--mono);font-size:12px;cursor:pointer;white-space:nowrap}
-
-/* TOPBAR */
 .topbar{display:flex;align-items:center;padding:12px 16px 10px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg);gap:8px}
 .tlogo{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.08em;flex:1}
 .tlogo span{color:var(--accent)}
@@ -53,18 +47,12 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .ldot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 1.8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 .abtn{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid rgba(239,159,39,.4);background:rgba(239,159,39,.08);color:var(--warn);font-size:11px;font-family:var(--mono);cursor:pointer}
-
-/* NAV */
 .nav{display:flex;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--bg)}
 .ntab{flex:1;padding:11px 4px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--text3);text-align:center;cursor:pointer;border-bottom:2px solid transparent}
 .ntab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .nicon{font-size:14px;display:block;margin-bottom:2px}
-
-/* VIEWS */
 .view{display:none;flex:1;overflow:hidden;flex-direction:column;min-height:0}
 .view.active{display:flex}
-
-/* CHANNELS */
 .chlist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
 .chitem{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2);margin-bottom:8px;cursor:pointer}
 .chitem:active{background:var(--bg3)}
@@ -75,8 +63,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .chm{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
 .cht{font-family:var(--mono);font-size:10px;color:var(--text3)}
 .ubadge{background:var(--accent);color:#fff;font-size:10px;font-family:var(--mono);border-radius:10px;padding:2px 7px}
-
-/* CHAT PANEL */
 #chatPanel{position:absolute;inset:0;background:var(--bg);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;z-index:50}
 #chatPanel.open{transform:translateX(0)}
 .chdr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -102,39 +88,39 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .mfield:focus{border-color:var(--accent)}
 .mfield::placeholder{color:var(--text3)}
 .sbtn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#fff}
-.sbtn:active{transform:scale(.92)}
 
-/* ═══ INTERCOM VIEW — always-live channel ═══ */
-.icview{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;overflow-y:auto;min-height:0}
+/* INTERCOM VIEW */
+.icview{flex:1;display:flex;flex-direction:column;align-items:center;min-height:0;overflow-y:auto}
 
-/* Live channel status bar */
+/* JOIN AUDIO SCREEN — shown first, one tap unlocks everything */
+#joinAudioScreen{position:absolute;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;text-align:center}
+#joinAudioScreen.hide{display:none}
+.ja-icon{font-size:56px}
+.ja-title{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text)}
+.ja-desc{font-size:13px;color:var(--text2);line-height:1.7;max-width:280px}
+.ja-btn{padding:16px 40px;background:var(--accent2);border:none;border-radius:var(--radius);color:#0a1f18;font-family:var(--mono);font-size:16px;font-weight:500;cursor:pointer;letter-spacing:.04em;width:100%;max-width:280px}
+.ja-btn:active{transform:scale(.97)}
+.ja-note{font-size:11px;color:var(--text3);font-family:var(--mono);line-height:1.6;max-width:260px}
+
 .ic-statusbar{width:100%;padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.ic-live-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);animation:blink 1s infinite;flex-shrink:0}
-.ic-live-dot.muted{background:var(--text3);animation:none}
+.ic-live-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.ic-live-dot.active{background:var(--danger);animation:blink .8s infinite}
 .ic-statuslbl{font-family:var(--mono);font-size:11px;color:var(--text2);flex:1}
 .ic-membersbar{font-family:var(--mono);font-size:10px;color:var(--accent2)}
-
-/* Who is speaking */
-.ic-speakers{width:100%;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0;min-height:52px;align-items:center}
-.ic-speaker-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--danger);background:rgba(226,75,74,.1);font-size:12px;font-family:var(--mono);color:var(--danger);animation:chipPop .2s ease-out}
-@keyframes chipPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
-.ic-speaker-pulse{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:pulse3 .8s infinite}
-@keyframes pulse3{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.ic-speakers{width:100%;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;flex-shrink:0;min-height:50px;align-items:center}
+.ic-speaker-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;border:1px solid var(--danger);background:rgba(226,75,74,.1);font-size:12px;font-family:var(--mono);color:var(--danger)}
+.ic-speaker-pulse{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:pulse3 .7s infinite}
+@keyframes pulse3{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
 .ic-nospeakers{font-size:12px;color:var(--text3);font-family:var(--mono)}
-
-/* Big MIC button */
 .ic-micwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
-.ic-micring{width:200px;height:200px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
-.ic-micring.on{border-color:var(--danger);box-shadow:0 0 0 0 rgba(226,75,74,.4);animation:micRing 1.2s infinite}
-@keyframes micRing{0%{box-shadow:0 0 0 0 rgba(226,75,74,.4)}70%{box-shadow:0 0 0 20px rgba(226,75,74,0)}100%{box-shadow:0 0 0 0 rgba(226,75,74,0)}}
-.ic-micbtn{width:170px;height:170px;border-radius:50%;background:var(--bg3);border:2px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none;touch-action:none}
+.ic-micring{width:200px;height:200px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic-micring.on{animation:micRing 1.2s infinite}
+@keyframes micRing{0%{box-shadow:0 0 0 0 rgba(226,75,74,.5)}70%{box-shadow:0 0 0 22px rgba(226,75,74,0)}100%{box-shadow:0 0 0 0 rgba(226,75,74,0)}}
+.ic-micbtn{width:170px;height:170px;border-radius:50%;background:var(--bg2);border:2px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none;touch-action:none}
 .ic-micbtn.on{background:var(--danger);border-color:var(--danger)}
-.ic-micbtn.on .ic-micicon{filter:brightness(10)}
-.ic-micicon{font-size:48px;transition:all .2s}
-.ic-miclabel{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:.06em;text-align:center;line-height:1.4}
-.ic-micbtn.on .ic-miclabel{color:rgba(255,255,255,.85)}
-
-/* Wave animation when mic is on */
+.ic-micicon{font-size:48px}
+.ic-miclabel{font-family:var(--mono);font-size:12px;color:var(--text2);letter-spacing:.06em;text-align:center;line-height:1.5}
+.ic-micbtn.on .ic-miclabel{color:rgba(255,255,255,.9)}
 .ic-wave{display:flex;gap:4px;align-items:center;height:28px;visibility:hidden}
 .ic-wave.show{visibility:visible}
 .ic-wave span{width:4px;border-radius:2px;background:var(--danger)}
@@ -144,13 +130,10 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .iw4{animation:vba .5s .11s ease-in-out infinite;height:4px}
 .iw5{animation:vba .5s .04s ease-in-out infinite;height:4px}
 @keyframes vba{0%,100%{height:4px}50%{height:20px}}
-
-.ic-hint{font-size:11px;color:var(--text3);text-align:center;line-height:1.6;max-width:260px;font-family:var(--mono)}
-.ic-channelstrip{width:100%;padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
-.ic-ch{padding:6px 14px;border-radius:16px;border:1px solid var(--border2);background:transparent;font-size:12px;font-family:var(--mono);color:var(--text2);cursor:pointer}
+.ic-hint{font-size:12px;color:var(--text3);text-align:center;line-height:1.6;max-width:260px;font-family:var(--mono);padding:0 16px}
+.ic-channelstrip{width:100%;padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.ic-ch{padding:7px 16px;border-radius:16px;border:1px solid var(--border2);background:transparent;font-size:12px;font-family:var(--mono);color:var(--text2);cursor:pointer}
 .ic-ch.on{background:rgba(124,92,252,.15);border-color:var(--accent);color:var(--accent)}
-
-/* ALERT MODAL */
 #alertModal{display:none;position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:24px}
 #alertModal.open{display:flex}
 .mbox{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:20px;width:100%;max-width:340px}
@@ -163,14 +146,10 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .macts{display:flex;gap:8px}
 .mcan{flex:1;padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:13px;cursor:pointer}
 .msend{flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--warn);color:#fff;font-size:13px;font-family:var(--mono);font-weight:500;cursor:pointer}
-
-/* ALERT BANNER */
 #alertBanner{display:none;position:absolute;top:56px;left:8px;right:8px;z-index:250;border-radius:var(--radius-sm);background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.4);padding:10px 14px}
 .abinner{display:flex;align-items:center;gap:10px}
 .abtxt{flex:1;font-size:13px;color:var(--warn);line-height:1.4}
 .abclose{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 4px}
-
-/* CREW */
 .crewlist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
 .crewsec{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 4px 6px}
 .crewitem{display:flex;align-items:center;gap:12px;padding:12px 8px;border-radius:var(--radius-sm)}
@@ -179,8 +158,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .sg{background:var(--accent2)}.sa{background:var(--warn)}.sr{background:var(--text3)}
 .crinf{flex:1}.crn{font-size:14px;font-weight:500}.crr{font-size:12px;color:var(--text2);margin-top:2px}
 .dmbtn{padding:7px 14px;border-radius:12px;border:1px solid var(--border2);background:transparent;font-size:12px;font-family:var(--mono);color:var(--accent);cursor:pointer}
-
-/* TOAST */
 #toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:10px 20px;font-size:13px;font-family:var(--mono);color:var(--text);white-space:nowrap;opacity:0;transition:all .2s;pointer-events:none;z-index:350}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 ::-webkit-scrollbar{width:3px}
@@ -211,7 +188,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div class="topbar">
   <div class="tlogo">Floor<span>Comm</span></div>
   <div class="lbadge"><div class="ldot"></div><span id="onlineCount">—</span></div>
@@ -231,27 +207,29 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
   </div>
 </div>
 
-<!-- CHANNELS VIEW -->
 <div class="view active" id="view-channels">
   <div class="chlist" id="chList"></div>
 </div>
 
-<!-- INTERCOM VIEW — always-live audio channel -->
 <div class="view" id="view-intercom">
+  <!-- JOIN AUDIO SCREEN — one tap to unlock audio on Safari/Chrome -->
+  <div id="joinAudioScreen">
+    <div class="ja-icon">🎙</div>
+    <div class="ja-title">Join the live channel</div>
+    <div class="ja-desc">Tap below to join the live audio channel. This unlocks your speaker so you can hear your crew instantly.</div>
+    <button class="ja-btn" onclick="joinAudio()">TAP TO JOIN AUDIO</button>
+    <div class="ja-note">Required once per session by your browser. After tapping, audio plays automatically.</div>
+  </div>
+
   <div class="icview">
-    <!-- Status bar -->
     <div class="ic-statusbar">
       <div class="ic-live-dot" id="icLiveDot"></div>
-      <div class="ic-statuslbl" id="icStatusLbl">Live channel — tap mic to talk</div>
+      <div class="ic-statuslbl" id="icStatusLbl">Channel open — tap mic to talk</div>
       <div class="ic-membersbar" id="icMembers"></div>
     </div>
-
-    <!-- Who is speaking right now -->
     <div class="ic-speakers" id="icSpeakers">
       <div class="ic-nospeakers" id="icNoSpeakers">No one speaking</div>
     </div>
-
-    <!-- Big mic button -->
     <div class="ic-micwrap">
       <div class="ic-micring" id="icMicRing">
         <div class="ic-micbtn" id="icMicBtn" onclick="toggleMic()">
@@ -262,20 +240,16 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
       <div class="ic-wave" id="icWave">
         <span class="iw1"></span><span class="iw2"></span><span class="iw3"></span><span class="iw4"></span><span class="iw5"></span>
       </div>
-      <div class="ic-hint">Tap to unmute and talk. Everyone on the channel hears you live. Tap again to mute.</div>
+      <div class="ic-hint">Tap mic to unmute and talk live. Tap again to mute. Everyone on the channel hears you instantly.</div>
     </div>
-
-    <!-- Channel selector -->
     <div class="ic-channelstrip" id="icChannelStrip"></div>
   </div>
 </div>
 
-<!-- CREW VIEW -->
 <div class="view" id="view-crew">
   <div class="crewlist" id="crewList"></div>
 </div>
 
-<!-- CHAT PANEL -->
 <div id="chatPanel">
   <div class="chdr">
     <button class="bbtn" onclick="closeChat()">‹</button>
@@ -294,7 +268,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
   </div>
 </div>
 
-<!-- ALERT MODAL -->
 <div id="alertModal">
   <div class="mbox">
     <div class="mtitle">⚠ BROADCAST FLOOR ALERT</div>
@@ -311,7 +284,6 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 <div id="toast"></div>
 
 <script>
-// ═══ FIREBASE CONFIG ═══
 var FIREBASE_CONFIG={
   apiKey:"AIzaSyA0PqtvDAPsNIzcfPqS5X-hQGy1cNZoScg",
   authDomain:"floorcomm-8ca67.firebaseapp.com",
@@ -319,17 +291,17 @@ var FIREBASE_CONFIG={
   databaseURL:"https://floorcomm-8ca67-default-rtdb.firebaseio.com"
 };
 
-// ═══ STATE ═══
 var db=null,me=null,currentChat=null;
 var alertTargets=new Set(['AllCrew']);
 var localMsgs={},unread={},myId=null;
-
-// Intercom state
 var icChannel='AllCrew';
 var micOn=false;
 var micStream=null;
-var peerConnections={};  // peerId -> RTCPeerConnection
-var speakers={};         // peerId -> name (currently speaking)
+var peerConnections={};
+var speakers={};
+var audioJoined=false;
+// Stored audio elements — created on joinAudio tap so they are ready to play
+var remoteAudios={};
 var ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}];
 
 var COLORS=[
@@ -359,6 +331,30 @@ function mkI(n){return String(n).split(' ').map(function(w){return w[0]||''}).jo
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function fmtT(ts){return new Date(ts).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+
+// ═══ JOIN AUDIO — the key tap that unlocks Safari audio ═══
+function joinAudio(){
+  audioJoined=true;
+  // Hide join screen
+  document.getElementById('joinAudioScreen').classList.add('hide');
+  // Create a silent audio context — this unlocks audio on Safari
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    ctx.resume();
+    // Play a silent buffer to unlock audio
+    var buf=ctx.createBuffer(1,1,22050);
+    var src=ctx.createBufferSource();
+    src.buffer=buf;
+    src.connect(ctx.destination);
+    src.start(0);
+  }catch(e){}
+  // Also create a silent audio element and play it
+  var silentAudio=new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
+  silentAudio.play().catch(function(){});
+  showToast('Audio unlocked! Tap mic to talk 🎙');
+  // Now connect to any peers already online
+  connectToAllPeers();
+}
 
 // ═══ AUTO CONNECT ═══
 window.addEventListener('load',function(){
@@ -399,7 +395,7 @@ function joinAs(name,role,ci,preIni){
   document.getElementById('loginScreen').classList.remove('show');
   renderAll();
   goOnline();
-  showToast('Welcome, '+name+'! 🟢');
+  showToast('Welcome, '+name+'!');
 }
 function joinCustom(){
   var name=document.getElementById('customName').value.trim();
@@ -410,13 +406,14 @@ function joinCustom(){
 document.getElementById('customName').addEventListener('keydown',function(e){if(e.key==='Enter')joinCustom();});
 document.getElementById('alertInp').addEventListener('keydown',function(e){if(e.key==='Enter')sendAlert();});
 
-// ═══ ONLINE & PRESENCE ═══
+// ═══ ONLINE ═══
 function goOnline(){
   myId=me.name.replace(/[^a-zA-Z0-9]/g,'_')+'_'+Date.now().toString(36);
   var ref=db.ref('presence/'+myId);
   ref.set({name:me.name,role:me.role,ts:Date.now()});
   ref.onDisconnect().remove();
   db.ref('signals/'+myId).onDisconnect().remove();
+  db.ref('speaking/'+myId).onDisconnect().remove();
   db.ref('presence').on('value',function(snap){
     var n=0,now=Date.now();
     snap.forEach(function(c){var d=c.val();if(d&&now-d.ts<90000)n++;});
@@ -424,20 +421,17 @@ function goOnline(){
     document.getElementById('icMembers').textContent=n+' online';
   });
   setInterval(function(){db.ref('presence/'+myId).update({ts:Date.now()});},25000);
-  // Listen for WebRTC signals
   db.ref('signals/'+myId).on('child_added',function(snap){
     var sig=snap.val();if(!sig)return;
     snap.ref.remove();
     handleSignal(sig);
   });
-  // Listen for speaking status
   db.ref('speaking').on('value',function(snap){
     speakers={};
+    var now=Date.now();
     snap.forEach(function(c){
       var d=c.val();
-      if(d&&d.name&&d.name!==me.name&&Date.now()-d.ts<3000){
-        speakers[c.key]=d.name;
-      }
+      if(d&&d.name&&d.name!==me.name&&now-d.ts<3000)speakers[c.key]=d.name;
     });
     renderSpeakers();
   });
@@ -445,32 +439,38 @@ function goOnline(){
   listenAlerts();
 }
 
-// ═══ MIC TOGGLE — tap on/off ═══
+// ═══ MIC TOGGLE ═══
 function toggleMic(){
+  if(!audioJoined){showToast('Tap "Join Audio" first');return;}
   if(!micOn){
-    // Turn mic ON
     navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,sampleRate:44100}})
       .then(function(stream){
         micStream=stream;
         micOn=true;
         updateMicUI(true);
+        // Add track to all existing peer connections
+        Object.keys(peerConnections).forEach(function(pid){
+          var pc=peerConnections[pid];
+          micStream.getTracks().forEach(function(t){
+            try{pc.addTrack(t,micStream);}catch(e){}
+          });
+        });
+        // Connect to new peers
         connectToAllPeers();
-        // Broadcast that we're speaking
         startSpeakingBroadcast();
-        showToast('Mic ON — everyone can hear you');
+        showToast('🔴 You are live — crew can hear you');
       })
-      .catch(function(){
-        showToast('Mic blocked — go to Settings > Safari > Microphone > Allow');
+      .catch(function(e){
+        showToast('Mic access denied — check browser settings');
       });
   } else {
-    // Turn mic OFF
     micOn=false;
     updateMicUI(false);
     if(micStream){
-      micStream.getTracks().forEach(function(t){t.enabled=false;});
+      micStream.getTracks().forEach(function(t){t.stop();});
+      micStream=null;
     }
     stopSpeakingBroadcast();
-    disconnectAll();
     showToast('Mic OFF');
   }
 }
@@ -485,22 +485,17 @@ function updateMicUI(on){
   var statuslbl=document.getElementById('icStatusLbl');
   if(on){
     btn.classList.add('on');ring.classList.add('on');
-    icon.textContent='🔴';
-    lbl.textContent='YOU ARE\nLIVE';
-    wave.classList.add('show');
-    dot.classList.remove('muted');
+    icon.textContent='🔴';lbl.textContent='YOU ARE\nLIVE';
+    wave.classList.add('show');dot.classList.add('active');
     statuslbl.textContent='You are broadcasting live';
-  } else {
+  }else{
     btn.classList.remove('on');ring.classList.remove('on');
-    icon.textContent='🎙';
-    lbl.textContent='TAP TO\nTALK';
-    wave.classList.remove('show');
-    dot.classList.add('muted');
-    statuslbl.textContent='Tap mic to talk';
+    icon.textContent='🎙';lbl.textContent='TAP TO\nTALK';
+    wave.classList.remove('show');dot.classList.remove('active');
+    statuslbl.textContent='Channel open — tap mic to talk';
   }
 }
 
-// Broadcast speaking status to Firebase so others see it
 var speakingInterval=null;
 function startSpeakingBroadcast(){
   db.ref('speaking/'+myId).set({name:me.name,ts:Date.now()});
@@ -516,93 +511,78 @@ function stopSpeakingBroadcast(){
 function renderSpeakers(){
   var box=document.getElementById('icSpeakers');
   var noSp=document.getElementById('icNoSpeakers');
-  // Remove old chips
-  var chips=box.querySelectorAll('.ic-speaker-chip');
-  chips.forEach(function(c){c.remove();});
+  box.querySelectorAll('.ic-speaker-chip').forEach(function(c){c.remove();});
   var keys=Object.keys(speakers);
-  if(keys.length===0){
-    noSp.style.display='block';
-  } else {
-    noSp.style.display='none';
-    keys.forEach(function(k){
-      var chip=document.createElement('div');
-      chip.className='ic-speaker-chip';
-      chip.innerHTML='<div class="ic-speaker-pulse"></div>'+esc(speakers[k])+' is talking';
-      box.appendChild(chip);
-    });
-  }
+  noSp.style.display=keys.length===0?'block':'none';
+  keys.forEach(function(k){
+    var chip=document.createElement('div');
+    chip.className='ic-speaker-chip';
+    chip.innerHTML='<div class="ic-speaker-pulse"></div>'+esc(speakers[k])+' is talking';
+    box.appendChild(chip);
+  });
 }
 
-// ═══ WEBRTC — connect to all online peers ═══
+// ═══ WEBRTC ═══
 function sendSig(toId,data){
   db.ref('signals/'+toId).push(Object.assign({from:myId,fromName:me.name},data));
 }
-
 function handleSignal(sig){
   if(sig.type==='offer')handleOffer(sig);
   else if(sig.type==='answer')handleAnswer(sig);
   else if(sig.type==='ice')handleIce(sig);
-  else if(sig.type==='join')handlePeerJoin(sig);
+  else if(sig.type==='join')setTimeout(function(){createOffer(sig.from);},400);
 }
-
-// When we turn mic on, connect to all peers
 function connectToAllPeers(){
   db.ref('presence').once('value',function(snap){
+    var now=Date.now();
     snap.forEach(function(c){
       var d=c.val();
-      if(d&&d.name!==me.name&&Date.now()-d.ts<90000){
-        // Send join signal so they know to connect back
-        sendSig(c.key,{type:'join',channel:icChannel});
+      if(d&&d.name!==me.name&&now-d.ts<90000){
+        sendSig(c.key,{type:'join'});
         setTimeout(function(){createOffer(c.key);},300);
       }
     });
   });
 }
-
-// When a peer joins, create offer to them too
-function handlePeerJoin(sig){
-  // They want to connect — we create offer back
-  setTimeout(function(){createOffer(sig.from);},500);
+function getOrCreateAudio(pid){
+  if(remoteAudios[pid])return remoteAudios[pid];
+  var a=document.createElement('audio');
+  a.id='audio_'+pid;
+  a.autoplay=true;
+  a.playsinline=true;
+  a.controls=false;
+  a.style.display='none';
+  document.body.appendChild(a);
+  remoteAudios[pid]=a;
+  return a;
 }
-
 function getPeer(pid){
   if(peerConnections[pid])return peerConnections[pid];
   var pc=new RTCPeerConnection({iceServers:ICE});
   peerConnections[pid]=pc;
-  // Add mic track if we have it
-  if(micStream){
-    micStream.getTracks().forEach(function(t){pc.addTrack(t,micStream);});
-  }
+  if(micStream)micStream.getTracks().forEach(function(t){pc.addTrack(t,micStream);});
   pc.onicecandidate=function(e){if(e.candidate)sendSig(pid,{type:'ice',candidate:e.candidate});};
   pc.ontrack=function(e){
-    // Play incoming audio automatically
-    var audioId='audio_'+pid;
-    var a=document.getElementById(audioId);
-    if(!a){
-      a=document.createElement('audio');
-      a.id=audioId;
-      a.autoplay=true;
-      a.playsinline=true;
-      a.style.display='none';
-      document.body.appendChild(a);
-    }
+    var a=getOrCreateAudio(pid);
     a.srcObject=e.streams[0];
+    // Since joinAudio was tapped, play should work now
     var p=a.play();
-    if(p){p.catch(function(){
-      // On Safari, need user gesture — show tap prompt
-      showToast('Tap anywhere to enable audio');
-      document.addEventListener('touchstart',function(){a.play();},{once:true});
-      document.addEventListener('click',function(){a.play();},{once:true});
-    });}
+    if(p){
+      p.then(function(){
+        // playing fine
+      }).catch(function(err){
+        console.log('play failed:',err);
+        // Try resume on next interaction
+        document.addEventListener('click',function(){a.play();},{once:true});
+        document.addEventListener('touchstart',function(){a.play();},{once:true});
+      });
+    }
   };
   pc.onconnectionstatechange=function(){
-    if(['disconnected','failed','closed'].indexOf(pc.connectionState)>-1){
-      closePeer(pid);
-    }
+    if(['disconnected','failed','closed'].indexOf(pc.connectionState)>-1)closePeer(pid);
   };
   return pc;
 }
-
 function createOffer(pid){
   var pc=getPeer(pid);
   pc.createOffer({audio:true,video:false})
@@ -610,39 +590,30 @@ function createOffer(pid){
     .then(function(){sendSig(pid,{type:'offer',sdp:pc.localDescription});})
     .catch(function(){});
 }
-
 function handleOffer(sig){
-  var pc=getPeer(sig.from);
-  pc._rn=sig.fromName;
+  var pc=getPeer(sig.from);pc._rn=sig.fromName;
   pc.setRemoteDescription(new RTCSessionDescription(sig.sdp))
     .then(function(){return pc.createAnswer();})
     .then(function(a){return pc.setLocalDescription(a);})
     .then(function(){sendSig(sig.from,{type:'answer',sdp:pc.localDescription});})
     .catch(function(){});
 }
-
 function handleAnswer(sig){
   var pc=peerConnections[sig.from];if(!pc)return;
   pc.setRemoteDescription(new RTCSessionDescription(sig.sdp)).catch(function(){});
 }
-
 function handleIce(sig){
   var pc=peerConnections[sig.from];if(!pc)return;
   pc.addIceCandidate(new RTCIceCandidate(sig.candidate)).catch(function(){});
 }
-
 function closePeer(pid){
   var pc=peerConnections[pid];
   if(pc){try{pc.close();}catch(e){}delete peerConnections[pid];}
-  var a=document.getElementById('audio_'+pid);if(a)a.remove();
+  var a=document.getElementById('audio_'+pid);
+  if(a){a.remove();delete remoteAudios[pid];}
 }
 
-function disconnectAll(){
-  Object.keys(peerConnections).forEach(function(id){closePeer(id);});
-  if(micStream){micStream.getTracks().forEach(function(t){t.stop();});micStream=null;}
-}
-
-// ═══ INTERCOM CHANNEL SELECTOR ═══
+// ═══ INTERCOM CHANNELS ═══
 function renderIcChannels(){
   var strip=document.getElementById('icChannelStrip');
   strip.innerHTML='';
@@ -700,35 +671,25 @@ function openChat(key){
   renderChannels();
   setTimeout(function(){document.getElementById('msgField').focus();},300);
 }
-function closeChat(){
-  document.getElementById('chatPanel').classList.remove('open');
-  currentChat=null;renderChannels();
-}
+function closeChat(){document.getElementById('chatPanel').classList.remove('open');currentChat=null;renderChannels();}
 function appendMsg(m,area){
   if(!area)area=document.getElementById('msgsArea');
   var mine=me&&m.f===me.name;var c=COLORS[m.ci||0];
   var row=document.createElement('div');row.className='mrow'+(mine?' mine':'');
   var html='<div class="mav" style="background:'+c.bg+';color:'+c.col+'">'+esc(m.i||mkI(m.f))+'</div>'
     +'<div class="mcol">'+(mine?'':'<div class="msender">'+esc(m.f)+'</div>');
-  if(m.ty==='alert'){
-    html+='<div class="alertbub">⚠ '+esc(m.t)+'</div>';
-  }else{
-    html+='<div class="bubble">'+esc(m.t)+'</div>';
-  }
+  if(m.ty==='alert'){html+='<div class="alertbub">⚠ '+esc(m.t)+'</div>';}
+  else{html+='<div class="bubble">'+esc(m.t)+'</div>';}
   html+='<div class="mtime">'+fmtT(m.ts)+'</div></div>';
   row.innerHTML=html;area.appendChild(row);
 }
-
 function pushMsg(key,msg){
   if(!localMsgs[key])localMsgs[key]=[];
   localMsgs[key].push(msg);
-  if(currentChat===key){
-    appendMsg(msg);
-    var a=document.getElementById('msgsArea');a.scrollTop=a.scrollHeight;
-  }else{unread[key]=(unread[key]||0)+1;}
+  if(currentChat===key){appendMsg(msg);var a=document.getElementById('msgsArea');a.scrollTop=a.scrollHeight;}
+  else unread[key]=(unread[key]||0)+1;
   renderChannels();
-  var toStore=Object.assign({},msg);
-  db.ref('messages/'+key).push(toStore).catch(function(){});
+  db.ref('messages/'+key).push(Object.assign({},msg)).catch(function(){});
 }
 function sendText(){
   if(!me||!currentChat)return;
@@ -738,7 +699,6 @@ function sendText(){
   f.value='';
 }
 function handleKey(e){if(e.key==='Enter'){e.preventDefault();sendText();}}
-
 function listenAllCh(){
   var since=Date.now();
   CHANNELS.forEach(function(ch){
@@ -842,7 +802,6 @@ function dmUser(name,ini,ci,e){
 function playPing(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(0.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);o.start();o.stop(ctx.currentTime+0.15);}catch(e){}}
 function playAlertSound(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();[0,0.2,0.4].forEach(function(delay){var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=660;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+delay+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+delay+0.22);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+0.25);});}catch(e){}}
 
-// ═══ TOAST & INIT ═══
 var toastT;
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},3000);}
 function renderAll(){renderChannels();renderCrew();renderIcChannels();}
