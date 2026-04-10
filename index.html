@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>FloorComm</title>
+<title>SquadComm</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Agora SDK — works on Safari, iPhone, Android, Chrome -->
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.19.0.js"></script>
@@ -65,7 +65,10 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 .chp{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .chm{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
 .cht{font-family:var(--mono);font-size:10px;color:var(--text3)}
-.ubadge{background:var(--accent);color:#fff;font-size:10px;font-family:var(--mono);border-radius:10px;padding:2px 7px}
+.ubadge{background:var(--danger);color:#fff;font-size:10px;font-family:var(--mono);border-radius:10px;padding:2px 7px;animation:flashBadge 1s ease-in-out infinite}
+@keyframes flashBadge{0%,100%{background:var(--danger);transform:scale(1)}50%{background:#ff8080;transform:scale(1.15)}}
+.chitem.flash{animation:flashRow 0.6s ease-in-out 3}
+@keyframes flashRow{0%,100%{background:var(--bg2)}50%{background:rgba(226,75,74,0.25);border-color:var(--danger)}}
 #chatPanel{position:absolute;inset:0;background:var(--bg);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;z-index:50}
 #chatPanel.open{transform:translateX(0)}
 .chdr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -165,13 +168,13 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 <div id="app">
 
 <div id="connectScreen">
-  <div class="clogo">Floor<span>Comm</span></div>
+  <div class="clogo">Squad<span>Comm</span></div>
   <div class="spinner"></div>
   <div class="cstatus" id="cStatus">Connecting...</div>
 </div>
 
 <div id="loginScreen">
-  <div class="llogo">Floor<span>Comm</span></div>
+  <div class="llogo">Squad<span>Comm</span></div>
   <div class="lsub">Production team intercom<br>Who are you today?</div>
   <div class="lgrid" id="quickUsers"></div>
   <div class="orrow"><hr><span>OR TYPE YOUR NAME</span><hr></div>
@@ -186,7 +189,7 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 </div>
 
 <div class="topbar">
-  <div class="tlogo">Floor<span>Comm</span></div>
+  <div class="tlogo">Squad<span>Comm</span></div>
   <div class="lbadge"><div class="ldot"></div><span id="onlineCount">—</span></div>
   <button class="abtn" onclick="openAlertModal()">⚠ ALERT</button>
 </div>
@@ -310,11 +313,6 @@ var PUSERS=[
 ];
 var CHANNELS=[
   {key:'AllCrew',label:'All Crew',ini:'AC',ci:0,members:'All hands'},
-  {key:'LineA',label:'Line A',ini:'LA',ci:1,members:'Line A team'},
-  {key:'LineB',label:'Line B',ini:'LB',ci:2,members:'Line B team'},
-  {key:'QC',label:'Quality Control',ini:'QC',ci:4,members:'QC team'},
-  {key:'Maint',label:'Maintenance',ini:'MX',ci:3,members:'Maintenance crew'},
-  {key:'Super',label:'Supervisor',ini:'SV',ci:5,members:'Supervisor direct'},
 ];
 
 function mkI(n){return String(n).split(' ').map(function(w){return w[0]||''}).join('').toUpperCase().slice(0,2);}
@@ -544,6 +542,8 @@ function showTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
   document.getElementById('view-'+t).classList.add('active');
+  // Since there's only one channel, open it directly
+  if(t==='channels'&&me) openChat('AllCrew');
 }
 
 // ═══ CHANNELS ═══
@@ -618,7 +618,7 @@ function listenAllCh(){
       localMsgs[ch.key].push(m);
       if(currentChat===ch.key){appendMsg(m);var a=document.getElementById('msgsArea');a.scrollTop=a.scrollHeight;}
       else unread[ch.key]=(unread[ch.key]||0)+1;
-      renderChannels();playPing();
+      renderChannels();playPing();flashChannel(ch.key);
     });
   });
 }
@@ -708,6 +708,18 @@ function dmUser(name,ini,ci,e){
 }
 
 // ═══ SOUNDS ═══
+function flashChannel(key){
+  var items=document.querySelectorAll('.chitem');
+  items.forEach(function(el){
+    if(el.querySelector('.chn')&&el.querySelector('.chn').textContent===
+      (CHANNELS.find(function(c){return c.key===key;})||{label:''}).label){
+      el.classList.remove('flash');
+      void el.offsetWidth;
+      el.classList.add('flash');
+      setTimeout(function(){el.classList.remove('flash');},2000);
+    }
+  });
+}
 function playPing(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(0.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);o.start();o.stop(ctx.currentTime+0.15);}catch(e){}}
 function playAlertSound(){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();[0,0.2,0.4].forEach(function(delay){var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=660;g.gain.setValueAtTime(0,ctx.currentTime+delay);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+delay+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+delay+0.22);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+0.25);});}catch(e){}}
 
