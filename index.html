@@ -210,7 +210,22 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
 </div>
 
 <div class="view active" id="view-channels">
-  <div class="chlist" id="chList"></div>
+  <div style="display:flex;flex-direction:column;height:100%;min-height:0">
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg2)">
+      <div style="width:34px;height:34px;border-radius:50%;background:#2a1f4a;color:#a78bfa;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:500">AC</div>
+      <div>
+        <div style="font-size:14px;font-weight:500">All Crew</div>
+        <div style="font-size:11px;color:var(--accent2);font-family:var(--mono)" id="crewOnline">All hands</div>
+      </div>
+    </div>
+    <div class="marea" id="msgsArea" style="flex:1;min-height:0"></div>
+    <div class="ibar">
+      <input type="text" class="mfield" id="msgField" placeholder="Message All Crew..."
+        autocomplete="off" autocorrect="off" autocapitalize="sentences"
+        onkeydown="handleKey(event)" />
+      <button class="sbtn" onclick="sendText()">➤</button>
+    </div>
+  </div>
 </div>
 
 <div class="view" id="view-intercom">
@@ -242,23 +257,7 @@ body{height:100%;height:-webkit-fill-available;overflow:hidden;background:var(--
   <div class="crewlist" id="crewList"></div>
 </div>
 
-<div id="chatPanel">
-  <div class="chdr">
-    <button class="bbtn" onclick="closeChat()">‹</button>
-    <div class="cav" id="chatAv"></div>
-    <div class="chinfi">
-      <div class="chname" id="chatName"></div>
-      <div class="chsub" id="chatSub"></div>
-    </div>
-  </div>
-  <div class="marea" id="msgsArea"></div>
-  <div class="ibar">
-    <input type="text" class="mfield" id="msgField" placeholder="Type a message..."
-      autocomplete="off" autocorrect="off" autocapitalize="sentences"
-      onkeydown="handleKey(event)" />
-    <button class="sbtn" onclick="sendText()">➤</button>
-  </div>
-</div>
+<!-- chat is now embedded in channels view -->
 
 <div id="alertModal">
   <div class="mbox">
@@ -542,6 +541,8 @@ function goOnline(){
     var n=0,now=Date.now();
     snap.forEach(function(c){var d=c.val();if(d&&now-d.ts<90000)n++;});
     document.getElementById('onlineCount').textContent=n+' ONLINE';
+    var co=document.getElementById('crewOnline');
+    if(co)co.textContent=n+' online';
   });
   setInterval(function(){db.ref('presence/'+myId).update({ts:Date.now()});},25000);
   listenAllCh();
@@ -577,45 +578,10 @@ function showTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
   document.getElementById('view-'+t).classList.add('active');
-  // Since there's only one channel, open it directly
-  if(t==='channels'&&me) openChat('AllCrew');
 }
 
-// ═══ CHANNELS ═══
-function renderChannels(){
-  var list=document.getElementById('chList');list.innerHTML='';
-  CHANNELS.forEach(function(ch){
-    var c=COLORS[ch.ci];var u=unread[ch.key]||0;
-    var msgs=localMsgs[ch.key]||[];var last=msgs[msgs.length-1];
-    var d=document.createElement('div');d.className='chitem';
-    d.innerHTML='<div class="chav" style="background:'+c.bg+';color:'+c.col+'">'+ch.ini+'</div>'
-      +'<div class="chinf"><div class="chn">'+ch.label+'</div>'
-      +'<div class="chp">'+(last?(last.ty==='alert'?'⚠ ':'')+esc(last.t):'No messages yet')+'</div></div>'
-      +'<div class="chm">'+(last?'<span class="cht">'+fmtT(last.ts)+'</span>':'')
-      +(u?'<span class="ubadge">'+u+'</span>':'')+'</div>';
-    d.onclick=function(){openChat(ch.key);};
-    list.appendChild(d);
-  });
-}
-
-// ═══ CHAT ═══
-function openChat(key){
-  currentChat=key;unread[key]=0;
-  var ch=CHANNELS.find(function(c){return c.key===key;})||{label:key,ini:mkI(key),ci:0,members:'Direct'};
-  var c=COLORS[ch.ci];
-  document.getElementById('chatAv').textContent=ch.ini;
-  document.getElementById('chatAv').style.background=c.bg;
-  document.getElementById('chatAv').style.color=c.col;
-  document.getElementById('chatName').textContent=ch.label;
-  document.getElementById('chatSub').textContent=ch.members||'Direct';
-  document.getElementById('chatPanel').classList.add('open');
-  var area=document.getElementById('msgsArea');area.innerHTML='';
-  (localMsgs[key]||[]).forEach(function(m){appendMsg(m,area);});
-  area.scrollTop=area.scrollHeight;
-  renderChannels();
-  setTimeout(function(){document.getElementById('msgField').focus();},300);
-}
-function closeChat(){document.getElementById('chatPanel').classList.remove('open');currentChat=null;renderChannels();}
+// ═══ CHANNELS (unused but kept) ═══
+function renderChannels(){}
 function appendMsg(m,area){
   if(!area)area=document.getElementById('msgsArea');
   var mine=me&&m.f===me.name;var c=COLORS[m.ci||0];
@@ -630,31 +596,43 @@ function appendMsg(m,area){
 function pushMsg(key,msg){
   if(!localMsgs[key])localMsgs[key]=[];
   localMsgs[key].push(msg);
-  if(currentChat===key){appendMsg(msg);var a=document.getElementById('msgsArea');a.scrollTop=a.scrollHeight;}
-  else unread[key]=(unread[key]||0)+1;
-  renderChannels();
+  appendMsg(msg);
+  var a=document.getElementById('msgsArea');
+  if(a)a.scrollTop=a.scrollHeight;
   db.ref('messages/'+key).push(Object.assign({},msg)).catch(function(){});
 }
 function sendText(){
-  if(!me||!currentChat)return;
+  if(!me)return;
   var f=document.getElementById('msgField');
   var txt=f.value.trim();if(!txt)return;
-  pushMsg(currentChat,{id:uid(),f:me.name,i:me.ini,ci:me.ci,t:txt,ty:'text',ts:Date.now()});
+  pushMsg('AllCrew',{id:uid(),f:me.name,i:me.ini,ci:me.ci,t:txt,ty:'text',ts:Date.now()});
   f.value='';
 }
 function handleKey(e){if(e.key==='Enter'){e.preventDefault();sendText();}}
 function listenAllCh(){
-  var since=Date.now();
-  CHANNELS.forEach(function(ch){
-    db.ref('messages/'+ch.key).orderByChild('ts').startAt(since).on('child_added',function(snap){
-      var m=snap.val();if(!m||!me||m.f===me.name)return;
-      if(localMsgs[ch.key]&&localMsgs[ch.key].find(function(x){return x.id===m.id;}))return;
-      if(!localMsgs[ch.key])localMsgs[ch.key]=[];
-      localMsgs[ch.key].push(m);
-      if(currentChat===ch.key){appendMsg(m);var a=document.getElementById('msgsArea');a.scrollTop=a.scrollHeight;}
-      else unread[ch.key]=(unread[ch.key]||0)+1;
-      renderChannels();playPing();flashChannel(ch.key);
+  var area=document.getElementById('msgsArea');
+  // Load last 50 messages from Firebase on startup
+  db.ref('messages/AllCrew').orderByChild('ts').limitToLast(50).once('value',function(snap){
+    var msgs=[];
+    snap.forEach(function(c){msgs.push(c.val());});
+    msgs.forEach(function(m){
+      if(!localMsgs['AllCrew'])localMsgs['AllCrew']=[];
+      localMsgs['AllCrew'].push(m);
+      appendMsg(m);
     });
+    if(area)area.scrollTop=area.scrollHeight;
+  });
+  // Listen for NEW messages in real time
+  var since=Date.now();
+  db.ref('messages/AllCrew').orderByChild('ts').startAt(since).on('child_added',function(snap){
+    var m=snap.val();if(!m||!me||m.f===me.name)return;
+    if(localMsgs['AllCrew']&&localMsgs['AllCrew'].find(function(x){return x.id===m.id;}))return;
+    if(!localMsgs['AllCrew'])localMsgs['AllCrew']=[];
+    localMsgs['AllCrew'].push(m);
+    appendMsg(m);
+    if(area)area.scrollTop=area.scrollHeight;
+    playPing();
+    flashChannel('AllCrew');
   });
 }
 function listenAlerts(){
